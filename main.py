@@ -1,4 +1,4 @@
-
+#!/usr/bin/python3
 
 # telegram bot docs https://github.com/eternnoir/pyTelegramBotAPI#a-simple-echo-bot
 # google spreadsheet docs https://developers.google.com/sheets/api/quickstart/python
@@ -12,13 +12,16 @@ from datetime import datetime
 from pathlib import Path
 from api_platform import API_Platform
 
+# TODO: break the whole thing into classes
+# TODO: read all hardcoded strings from config.yml
+
 # Constants
 SPREADSHEET_ID = '19fDDq9QyoN9aM-LnyCN7dbMynuD7yjMrvTSoizU_VZE'
 ROW_DATE_START = 5
 ROW_NAMES = 4
 
 # create logs folder
-Path("logs").mkdir(parents=True,exist_ok=True)
+Path("logs").mkdir(parents=True, exist_ok=True)
 
 # Logger config
 log_date = datetime.now().strftime("%d%m%Y-%H:%M:%S")
@@ -28,12 +31,14 @@ log_level = logging.DEBUG
 logging.basicConfig(filename=log_file, format=log_format, level=log_level)
 
 # functions
+# TODO: move secret API key to mongoDB
 def read_secret_file(platform: API_Platform):
   with open(f"secrets/secret_{platform.value}.key", "r") as secret_file:
     secret = secret_file.read().replace('\n', '')
     logging.debug(f'secret loaded to cache: {secret}')
     return secret
 
+# TODO: move all users to mongoDB
 def read_users_configuration():
   with open("users.yml", 'r') as stream:
     users = yaml.safe_load(stream)
@@ -46,6 +51,7 @@ api_key_telegram = read_secret_file(API_Platform.telegram)
 bot = telebot.TeleBot(api_key_telegram)
 
 # Telegram bot handlers
+# TODO: add function to handler (Bot should react to users bad input)
 @bot.message_handler(content_types=['text'], regexp='^(?:([01]?\d|2[0-3]):([0-5]?\d):)?([0-5]?\d)$')
 def handle_hour_report(message):
   logging.debug(f'User: {message.from_user.username} entered time {message.text}')
@@ -65,6 +71,7 @@ def handle_hour_report(message):
     bot.send_message(message.chat.id, f'user {message.from_user.username} not registered')
     logging.info(f'user {message.from_user.username} not registered')
 
+# TODO: scheduled task runs once a day 5 times a week (scan blank table cells and send a reminder to the user)
 # TODO: /register registration form
 # TODO: /help list all commands
 
