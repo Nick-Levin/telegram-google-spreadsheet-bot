@@ -1,5 +1,6 @@
-import ntplib
+#!/usr/bin/python3
 
+import ntplib
 
 # # using global pool to get the closest server(not many in israel to sync time)
 # response = client.request('pool.ntp.org', version=3)
