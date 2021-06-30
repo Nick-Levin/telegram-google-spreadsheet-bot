@@ -44,7 +44,10 @@ logging.basicConfig(filename=log_file, format=log_format, level=log_level)
 redis = redis.Redis(config['REDIS']['url'], config['REDIS']['port'])
 logging.info(f'connection to redis established on {config["REDIS"]["url"]}:{config["REDIS"]["port"]}')
 
-# TODO: move all users to mongoDB
+users_list_bytes = redis.scan(cursor=0, match='user/*', count=10)[1]
+users_list = list(map(lambda user: user.decode(), users_list_bytes))
+
+# TODO: move all users to Redis
 def read_users_configuration():
   with open("users.yml", 'r') as stream:
     users = yaml.safe_load(stream)
