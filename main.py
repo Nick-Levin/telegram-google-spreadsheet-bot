@@ -10,24 +10,29 @@ import logging
 import gspread
 from datetime import datetime
 from pathlib import Path
+import configparser
 from api_platform import API_Platform
 
 # TODO: break the whole thing into classes
 # TODO: read all hardcoded strings from config.yml
 
-# Constants
-SPREADSHEET_ID = '19fDDq9QyoN9aM-LnyCN7dbMynuD7yjMrvTSoizU_VZE'
-ROW_DATE_START = 5
-ROW_NAMES = 4
-
-# create logs folder
+# Create logs folder
 Path("logs").mkdir(parents=True, exist_ok=True)
 
+# Config configuration
+config = configparser.RawConfigParser()
+config.read("config.ini")
+
+# Constants
+SPREADSHEET_ID = config["google"]["spreadsheet_id"]
+ROW_DATE_START = config["google"]["row_date_start"]
+ROW_NAMES = config["google"]["row_names_start"]
+
 # Logger config
-log_date = datetime.now().strftime("%d%m%Y-%H:%M:%S")
-log_format = '%(levelname)s:%(asctime)s:%(message)s'
-log_file = f'logs/app-test.log'
-log_level = logging.DEBUG
+log_date = datetime.now().strftime(config["LOG"]["date_format"])
+log_format = config["LOG"]["text_format"]
+log_file = config["LOG"]["name"]
+log_level = config["LOG"]["level"]
 logging.basicConfig(filename=log_file, format=log_format, level=log_level)
 
 # functions
