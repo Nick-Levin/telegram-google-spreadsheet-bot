@@ -2,6 +2,7 @@
 
 # telegram bot docs https://github.com/eternnoir/pyTelegramBotAPI#a-simple-echo-bot
 # google spreadsheet docs https://developers.google.com/sheets/api/quickstart/python
+# gspread docs https://docs.gspread.org/en/latest/oauth2.html
 
 import os
 import yaml
