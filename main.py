@@ -12,10 +12,7 @@ from datetime import datetime
 from api_platform import API_Platform
 
 # Constants
-SPREADSHEET_TOKEN_FILE = 'token.json'
-SPREADSHEET_SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 SPREADSHEET_ID = '19fDDq9QyoN9aM-LnyCN7dbMynuD7yjMrvTSoizU_VZE'
-SPREADSHEET_RANGE = 'B6:H12'
 ROW_DATE_START = 5
 ROW_NAMES = 4
 
