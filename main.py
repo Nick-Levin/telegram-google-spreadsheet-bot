@@ -15,10 +15,19 @@ from api_platform import API_Platform
 # TODO: break the whole thing into classes
 # TODO: read all hardcoded strings from config.yml
 
+class Madock():
+  def __init__(self):
+    pass
+
+config = None
+with open("config.yml", 'r') as stream:
+  config = yaml.safe_load(stream)
+
+print(config)
 # Constants
-SPREADSHEET_ID = '19fDDq9QyoN9aM-LnyCN7dbMynuD7yjMrvTSoizU_VZE'
-ROW_DATE_START = 5
-ROW_NAMES = 4
+SPREADSHEET_ID = config['google']['spreadsheet_id']
+ROW_DATE_START = config['google']['sheets']['row_date_start']
+ROW_NAMES = config['google']['sheets']['row_names_start']
 
 # create logs folder
 Path("logs").mkdir(parents=True, exist_ok=True)
