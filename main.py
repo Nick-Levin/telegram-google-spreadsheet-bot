@@ -8,6 +8,7 @@ import yaml
 import telebot
 import logging
 import gspread
+import configparser
 from datetime import datetime
 from pathlib import Path
 from api_platform import API_Platform
@@ -19,24 +20,23 @@ class Madock():
   def __init__(self):
     pass
 
-config = None
-with open("config.yml", 'r') as stream:
-  config = yaml.safe_load(stream)
-
-print(config)
-# Constants
-SPREADSHEET_ID = config['google']['spreadsheet_id']
-ROW_DATE_START = config['google']['sheets']['row_date_start']
-ROW_NAMES = config['google']['sheets']['row_names_start']
-
 # create logs folder
 Path("logs").mkdir(parents=True, exist_ok=True)
 
+# Config configuration
+config = configparser.RawConfigParser()
+config.read("config.ini")
+
+# Constants
+SPREADSHEET_ID = config["google"]["spreadsheet_id"]
+ROW_DATE_START = config["google"]["row_date_start"]
+ROW_NAMES = config["google"]["row_names_start"]
+
 # Logger config
-log_date = datetime.now().strftime("%m%d%-y-%H:%M:%S")
-log_format = '%(levelname)s:%(asctime)s:%(message)s'
-log_file = f'logs/app-{log_date}.log'
-log_level = logging.DEBUG
+log_date = datetime.now().strftime(config["LOG"]["date_format"])
+log_format = config["LOG"]["text_format"]
+log_file = config["LOG"]["name"].replace("DATE", log_date)
+log_level = config["LOG"]["level"]
 logging.basicConfig(filename=log_file, format=log_format, level=log_level)
 
 # functions
