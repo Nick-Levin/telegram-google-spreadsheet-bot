@@ -65,7 +65,7 @@ bot = telebot.TeleBot(api_key_telegram)
 def handle_hour_report(message):
   logging.debug(f'User: {message.from_user.username} entered time {message.text}')
   if message.from_user.username in users:
-
+    
     gc = gspread.service_account(filename='service_account.json')
     sh = gc.open_by_key(SPREADSHEET_ID)
     worksheet = sh.worksheet(datetime.now().strftime("%B"))
@@ -73,7 +73,7 @@ def handle_hour_report(message):
     update_row_number = ROW_DATE_START + int(datetime.now().strftime("%d"))
     update_column_number = values[ROW_NAMES].index(users[message.from_user.username]) + 1
     worksheet.update_cell(update_row_number, update_column_number, message.text)
-
+    
     bot.send_message(message.chat.id, 'time updated')
     logging.info(f'time updated for user {message.from_user.username}')
   else:
