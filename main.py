@@ -4,7 +4,6 @@
 # google spreadsheet docs https://developers.google.com/sheets/api/quickstart/python
 # gspread docs https://docs.gspread.org/en/latest/oauth2.html
 
-import os
 import yaml
 import telebot
 import logging
