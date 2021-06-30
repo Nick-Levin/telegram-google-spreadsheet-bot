@@ -10,7 +10,6 @@ import logging
 import gspread
 from datetime import datetime
 from api_platform import API_Platform
-from gspread.auth import service_account
 
 # Constants
 SPREADSHEET_TOKEN_FILE = 'token.json'
