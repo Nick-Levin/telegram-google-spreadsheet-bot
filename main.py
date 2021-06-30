@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+
 
 # telegram bot docs https://github.com/eternnoir/pyTelegramBotAPI#a-simple-echo-bot
 # google spreadsheet docs https://developers.google.com/sheets/api/quickstart/python
@@ -21,9 +21,9 @@ ROW_DATE_START = 5
 ROW_NAMES = 4
 
 # Logger config
-log_date = datetime.now().strftime("%m%d%-y-%H:%M:%S")
+log_date = datetime.now().strftime("%d%m%Y-%H:%M:%S")
 log_format = '%(levelname)s:%(asctime)s:%(message)s'
-log_file = f'logs/app-{log_date}.log'
+log_file = f'logs/app-test.log'
 log_level = logging.DEBUG
 logging.basicConfig(filename=log_file, format=log_format, level=log_level)
 
