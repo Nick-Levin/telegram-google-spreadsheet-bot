@@ -21,9 +21,9 @@ ROW_NAMES = 4
 Path("logs").mkdir(parents=True,exist_ok=True)
 
 # Logger config
-log_date = datetime.now().strftime("%d%m%Y-%H:%M:%S")
+log_date = datetime.now().strftime("%m%d%-y-%H:%M:%S")
 log_format = '%(levelname)s:%(asctime)s:%(message)s'
-log_file = f'logs/app-test.log'
+log_file = f'logs/app-{log_date}.log'
 log_level = logging.DEBUG
 logging.basicConfig(filename=log_file, format=log_format, level=log_level)
 
