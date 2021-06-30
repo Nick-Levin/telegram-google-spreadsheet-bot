@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+
 
 # telegram bot docs https://github.com/eternnoir/pyTelegramBotAPI#a-simple-echo-bot
 # google spreadsheet docs https://developers.google.com/sheets/api/quickstart/python
@@ -9,12 +9,16 @@ import telebot
 import logging
 import gspread
 from datetime import datetime
+from pathlib import Path
 from api_platform import API_Platform
 
 # Constants
 SPREADSHEET_ID = '19fDDq9QyoN9aM-LnyCN7dbMynuD7yjMrvTSoizU_VZE'
 ROW_DATE_START = 5
 ROW_NAMES = 4
+
+# create logs folder
+Path("logs").mkdir(parents=True,exist_ok=True)
 
 # Logger config
 log_date = datetime.now().strftime("%m%d%-y-%H:%M:%S")
