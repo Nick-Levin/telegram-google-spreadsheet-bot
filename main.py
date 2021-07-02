@@ -24,7 +24,7 @@ class Madock():
 # create logs folder
 Path("logs").mkdir(parents=True, exist_ok=True)
 
-# Config configuration
+# Config initialization
 config = configparser.RawConfigParser()
 config.read("config.ini")
 
@@ -44,19 +44,19 @@ logging.basicConfig(filename=log_file, format=log_format, level=log_level)
 redis = redis.Redis(config['REDIS']['url'], config['REDIS']['port'])
 logging.info(f'connection to redis established on {config["REDIS"]["url"]}:{config["REDIS"]["port"]}')
 
-# TODO: use loop to collect all users and flat them to one list of users
-users_list_bytes = redis.scan(cursor=0, match='user/*', count=10)[1]
-users_list = list(map(lambda user: user.decode(), users_list_bytes))
-
-# TODO: move all users to Redis
-def read_users_configuration():
-  with open("users.yml", 'r') as stream:
-    users = yaml.safe_load(stream)
-    logging.debug(f'users list loaded to cache: {users}')
-    return users
-
 # Main
-users = read_users_configuration()
+cursor = 0
+users = []
+
+while True:
+  result = redis.scan(cursor, match='user/*', count=10)
+  cursor = int(result[0])
+  keys = result[1]
+  for key in keys:
+    users.append(redis.get(key).decode())
+  if cursor == 0:
+    break
+
 bot = telebot.TeleBot(redis.get(config['TELEGRAM']['api_key_path']).decode())
 
 # Telegram bot handlers
