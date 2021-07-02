@@ -50,8 +50,8 @@ client = ntplib.NTPClient()
 
 # using global pool to get the closest server(not many in israel to sync time)
 response = client.request('pool.ntp.org', version=3)
-current_month = datetime.fromtimestamp(response.tx_time).strftime('%B')
-current_day = int(datetime.fromtimestamp(response.tx_time).strftime('%d'))
+current_month: str = datetime.fromtimestamp(response.tx_time).strftime('%B')
+current_day: int = int(datetime.fromtimestamp(response.tx_time).strftime('%d'))
 
 # Main
 cursor = 0
