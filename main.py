@@ -3,8 +3,10 @@
 # telegram bot docs https://github.com/eternnoir/pyTelegramBotAPI#a-simple-echo-bot
 # google spreadsheet docs https://developers.google.com/sheets/api/quickstart/python
 # gspread docs https://docs.gspread.org/en/latest/oauth2.html
+# Logger docs https://www.toptal.com/python/in-depth-python-logging
 
 import yaml
+import redis
 import telebot
 import ntplib
 import logging
@@ -12,8 +14,6 @@ import gspread
 import configparser
 from datetime import datetime
 from pathlib import Path
-from api_platform import API_Platform
-from datetime import datetime
 
 # TODO: break the whole thing into classes
 # TODO: read all hardcoded strings from config.yml
@@ -25,48 +25,48 @@ class Madock():
 # create logs folder
 Path("logs").mkdir(parents=True, exist_ok=True)
 
-# Config configuration
+# Config initialization
 config = configparser.RawConfigParser()
 config.read("config.ini")
 
 # Constants
-SPREADSHEET_ID = config["google"]["spreadsheet_id"]
-ROW_DATE_START = config["google"]["row_date_start"]
-ROW_NAMES = config["google"]["row_names_start"]
+SPREADSHEET_ID = config["GOOGLE"]["spreadsheet_id"]
+ROW_DATE_START = config["GOOGLE"]["row_date_start"]
+ROW_NAMES = config["GOOGLE"]["row_names_start"]
 
 # Logger config
 log_date = datetime.now().strftime(config["LOG"]["date_format"])
 log_format = config["LOG"]["text_format"]
-log_file = config["LOG"]["name"].replace("DATE", log_date)
+log_file = config["LOG"]["path"].replace("DATE", log_date)
 log_level = config["LOG"]["level"]
 logging.basicConfig(filename=log_file, format=log_format, level=log_level)
 
+# Redis connection
+redis = redis.Redis(config['REDIS']['url'], config['REDIS']['port'])
+logging.info(f'connection to redis established on {config["REDIS"]["url"]}:{config["REDIS"]["port"]}')
+
 # Timezone
 client = ntplib.NTPClient()
+
 # using global pool to get the closest server(not many in israel to sync time)
 response = client.request('pool.ntp.org', version=3)
-current_month = datetime.fromtimestamp(response.tx_time).strftime('%B')
-current_day = int(datetime.fromtimestamp(response.tx_time).strftime('%d'))
-
-# functions
-# TODO: move secret API key to mongoDB
-def read_secret_file(platform: API_Platform):
-  with open(f"secrets/secret_{platform.value}.key", "r") as secret_file:
-    secret = secret_file.read().replace('\n', '')
-    logging.debug(f'secret loaded to cache: {secret}')
-    return secret
-
-# TODO: move all users to mongoDB
-def read_users_configuration():
-  with open("users.yml", 'r') as stream:
-    users = yaml.safe_load(stream)
-    logging.debug(f'users list loaded to cache: {users}')
-    return users
+current_month: str = datetime.fromtimestamp(response.tx_time).strftime('%B')
+current_day: int = int(datetime.fromtimestamp(response.tx_time).strftime('%d'))
 
 # Main
-users = read_users_configuration()
-api_key_telegram = read_secret_file(API_Platform.telegram)
-bot = telebot.TeleBot(api_key_telegram)
+cursor = 0
+users = []
+
+while True:
+  result = redis.scan(cursor, match='user/*', count=10)
+  cursor = int(result[0])
+  keys = result[1]
+  for key in keys:
+    users.append(redis.get(key).decode())
+  if cursor == 0:
+    break
+
+bot = telebot.TeleBot(redis.get(config['TELEGRAM']['api_key_path']).decode())
 
 # Telegram bot handlers
 # TODO: add function to handler (Bot should react to users bad input)
