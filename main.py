@@ -1,11 +1,9 @@
 #!/usr/bin/python3
 
-# telegram bot docs https://github.com/eternnoir/pyTelegramBotAPI#a-simple-echo-bot
 # google spreadsheet docs https://developers.google.com/sheets/api/quickstart/python
 # gspread docs https://docs.gspread.org/en/latest/oauth2.html
 # Logger docs https://www.toptal.com/python/in-depth-python-logging
 
-import yaml
 import redis
 import telebot
 import ntplib
@@ -16,11 +14,6 @@ from datetime import datetime
 from pathlib import Path
 
 # TODO: break the whole thing into classes
-# TODO: read all hardcoded strings from config.yml
-
-class Madock():
-  def __init__(self):
-    pass
 
 # create logs folder
 Path("logs").mkdir(parents=True, exist_ok=True)
@@ -55,14 +48,14 @@ current_day: int = int(datetime.fromtimestamp(response.tx_time).strftime('%d'))
 
 # Main
 cursor = 0
-users = []
+users = {}
 
 while True:
   result = redis.scan(cursor, match='user/*', count=10)
   cursor = int(result[0])
   keys = result[1]
   for key in keys:
-    users.append(redis.get(key).decode())
+    users[key.decode()[5:]] = redis.get(key).decode()
   if cursor == 0:
     break
 
