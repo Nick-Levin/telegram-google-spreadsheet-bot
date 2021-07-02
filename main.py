@@ -8,6 +8,7 @@
 import yaml
 import redis
 import telebot
+import ntplib
 import logging
 import gspread
 import configparser
@@ -44,6 +45,14 @@ logging.basicConfig(filename=log_file, format=log_format, level=log_level)
 redis = redis.Redis(config['REDIS']['url'], config['REDIS']['port'])
 logging.info(f'connection to redis established on {config["REDIS"]["url"]}:{config["REDIS"]["port"]}')
 
+# Timezone
+client = ntplib.NTPClient()
+
+# using global pool to get the closest server(not many in israel to sync time)
+response = client.request('pool.ntp.org', version=3)
+current_month = datetime.fromtimestamp(response.tx_time).strftime('%B')
+current_day = int(datetime.fromtimestamp(response.tx_time).strftime('%d'))
+
 # Main
 cursor = 0
 users = []
@@ -65,16 +74,15 @@ bot = telebot.TeleBot(redis.get(config['TELEGRAM']['api_key_path']).decode())
 def handle_hour_report(message):
   logging.debug(f'User: {message.from_user.username} entered time {message.text}')
   if message.from_user.username in users:
-    
     gc = gspread.service_account(filename='service_account.json')
     sh = gc.open_by_key(SPREADSHEET_ID)
-    worksheet = sh.worksheet(datetime.now().strftime("%B"))
+    worksheet = sh.worksheet(current_month)
     values = worksheet.get_all_values()
-    update_row_number = ROW_DATE_START + int(datetime.now().strftime("%d"))
+    update_row_number = ROW_DATE_START + current_day
     update_column_number = values[ROW_NAMES].index(users[message.from_user.username]) + 1
     worksheet.update_cell(update_row_number, update_column_number, message.text)
-    
-    bot.send_message(message.chat.id, 'time updated')
+
+    bot.send_message(message.chat.id, 'successfully update!')
     logging.info(f'time updated for user {message.from_user.username}')
   else:
     bot.send_message(message.chat.id, f'user {message.from_user.username} not registered')

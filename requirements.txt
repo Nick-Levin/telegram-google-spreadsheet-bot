@@ -6,8 +6,11 @@ PyYAML == 5.4.1
 # telegram-bot/main.py: 8
 cronyo == 0.4.5
 
-# telegram-bot/main.py: 12
+# telegram-bot/main.py: 13
 gspread == 3.7.0
+
+# telegram-bot/main.py: 11
+ntplib == 0.4.0
 
 # telegram-bot/main.py: 10
 pyTelegramBotAPI == 3.8.1
