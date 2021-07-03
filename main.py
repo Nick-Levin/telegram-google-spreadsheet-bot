@@ -14,9 +14,6 @@ from app_logger import AppLogger
 from datetime import datetime
 from pathlib import Path
 
-# create logs folder
-Path("logs").mkdir(parents=True, exist_ok=True)
-
 config: Config = Config()
 logger: Logger = AppLogger().get_logger()
 
@@ -24,6 +21,7 @@ logger: Logger = AppLogger().get_logger()
 redis = redis.Redis(config.REDIS_URL, config.REDIS_PORT)
 logger.info(f'connection to redis established on {config.REDIS_URL}:{config.REDIS_PORT}')
 
+# TODO: move time calcs to the moment they are needed
 # Timezone
 client = ntplib.NTPClient()
 # using global pool to get the closest server(not many in israel to sync time)
