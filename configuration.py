@@ -5,7 +5,7 @@ from datetime import datetime
 
 class Config(object):
   _instance = None
-  
+
   def __new__(cls):
     if Config._instance is None:
       Config._instance = object.__new__(cls)
@@ -30,6 +30,3 @@ class Config(object):
     self.REDIS_PORT         = config['REDIS']['port']
 
     self.TELEBOT_API_KEY    = config['TELEGRAM']['api_key_path']
-
-    # TODO: init logger HERE
-    # TODO: log info for config loaded to cache
