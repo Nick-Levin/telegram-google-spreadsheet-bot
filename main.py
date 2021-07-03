@@ -16,14 +16,17 @@ from pathlib import Path
 
 config: Config = Config()
 logger: Logger = AppLogger().get_logger()
+users = {}
 
+# TODO: move to class (Singleton)
 # Redis connection
 redis = redis.Redis(config.REDIS_URL, config.REDIS_PORT)
 logger.info(f'connection to redis established on {config.REDIS_URL}:{config.REDIS_PORT}')
 
-# TODO: move time calcs to the moment they are needed
-# Timezone
+# Connect to NTP
 client = ntplib.NTPClient()
+
+# TODO: move time calcs to the moment they are needed
 # using global pool to get the closest server(not many in israel to sync time)
 response = client.request('pool.ntp.org', version=3)
 current_month: str = datetime.fromtimestamp(response.tx_time).strftime('%B')
@@ -31,8 +34,8 @@ current_day: int = int(datetime.fromtimestamp(response.tx_time).strftime('%d'))
 
 # Main
 cursor = 0
-users = {}
 
+# move to static function (make sure runs once per application run || per user registration)
 while True:
   result = redis.scan(cursor, match='user/*', count=10)
   cursor = int(result[0])
