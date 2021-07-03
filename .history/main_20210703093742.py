@@ -25,8 +25,8 @@ config.read("config.ini")
 
 # Constants
 SPREADSHEET_ID = config["GOOGLE"]["spreadsheet_id"]
-ROW_DATE_START = int(config["GOOGLE"]["row_date_start"])
-ROW_NAMES = int(config["GOOGLE"]["row_names_start"])
+ROW_DATE_START = config["GOOGLE"]["row_date_start"]
+ROW_NAMES = config["GOOGLE"]["row_names_start"]
 
 # Logger config
 log_date = datetime.now().strftime(config["LOG"]["date_format"])
@@ -78,27 +78,30 @@ def send_register(message):
   redis.set(f'user/{message.from_user.username}', full_name)
   bot.reply_to(message, f'Welcome {full_name} :)')
 
+# # TODO: add function to handler (Bot should react to users bad input)
 @bot.message_handler(content_types=['text'])
 def handle_hour_report(message):
   if not re.search('^(?:([01]?\d|2[0-3]):([0-5]?\d):)?([0-5]?\d)$', message.text):
     bot.reply_to(message, "Sorry I didn't understand that")
-  else:
-    logging.debug(f'User: {message.from_user.username} entered time {message.text}')
-    if message.from_user.username in users:
-      gc = gspread.service_account(filename='service_account.json')
-      sh = gc.open_by_key(SPREADSHEET_ID)
-      worksheet = sh.worksheet(current_month)
-      values = worksheet.get_all_values()
-      update_row_number = ROW_DATE_START + current_day
-      update_column_number = values[ROW_NAMES].index(users[message.from_user.username]) + 1
-      worksheet.update_cell(update_row_number, update_column_number, message.text)
 
-      bot.send_message(message.chat.id, 'successfully update!')
-      logging.info(f'time updated for user {message.from_user.username}')
-    else:
-      bot.send_message(message.chat.id, f'user {message.from_user.username} not registered, use the /register commnad for example /register Firstname Lastname')
-      logging.info(f'user {message.from_user.username} not registered')
+  logging.debug(f'User: {message.from_user.username} entered time {message.text}')
+  if message.from_user.username in users:
+    gc = gspread.service_account(filename='service_account.json')
+    sh = gc.open_by_key(SPREADSHEET_ID)
+    worksheet = sh.worksheet(current_month)
+    values = worksheet.get_all_values()
+    update_row_number = ROW_DATE_START + current_day
+    update_column_number = values[ROW_NAMES].index(users[message.from_user.username]) + 1
+    worksheet.update_cell(update_row_number, update_column_number, message.text)
+
+    bot.send_message(message.chat.id, 'successfully update!')
+    logging.info(f'time updated for user {message.from_user.username}')
+  else:
+    bot.send_message(message.chat.id, f'user {message.from_user.username} not registered')
+    logging.info(f'user {message.from_user.username} not registered')
 
 # TODO: scheduled task runs once a day 5 times a week (scan blank table cells and send a reminder to the user)
+# TODO: /register registration form
+# TODO: /help list all commands
 
 bot.polling()

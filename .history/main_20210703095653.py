@@ -78,6 +78,7 @@ def send_register(message):
   redis.set(f'user/{message.from_user.username}', full_name)
   bot.reply_to(message, f'Welcome {full_name} :)')
 
+# # TODO: add function to handler (Bot should react to users bad input)
 @bot.message_handler(content_types=['text'])
 def handle_hour_report(message):
   if not re.search('^(?:([01]?\d|2[0-3]):([0-5]?\d):)?([0-5]?\d)$', message.text):
@@ -100,5 +101,7 @@ def handle_hour_report(message):
       logging.info(f'user {message.from_user.username} not registered')
 
 # TODO: scheduled task runs once a day 5 times a week (scan blank table cells and send a reminder to the user)
+# TODO: /register registration form
+# TODO: /help list all commands
 
 bot.polling()
