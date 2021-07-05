@@ -60,11 +60,10 @@ days_of_the_week = ['Sunday',
 # Main
 cursor = 0
 users = {}
-chat_id = 0
 
 while True:
     #TODO: add username to chat id get
-    chat_id = redis.get('chat_chat_id/')
+    chat_id = redis.get('chat_id/')
     result = redis.scan(cursor, match='user/*', count=10)
     cursor = int(result[0])
     keys = result[1]
