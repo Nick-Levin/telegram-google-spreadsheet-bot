@@ -76,7 +76,6 @@ bot = telebot.TeleBot(redis.get(config['TELEGRAM']['api_key_path']).decode())
 
 # Telegram bot handlers
 
-
 @bot.message_handler(commands=['help'])
 def handle_start_help(message):
     try:
