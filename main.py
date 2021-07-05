@@ -60,7 +60,7 @@ days_of_the_week = ['Sunday',
 # Main
 cursor = 0
 users = {}
-global chat_id
+chat_id = 0
 
 while True:
     chat_id = redis.get('chat_info/')
@@ -90,7 +90,7 @@ def handle_start_help(message):
 def send_welcome(message):
     try:
         bot.reply_to(message, 'Hello, you need to register send /register')
-        redis.set('chat_info/', message.chat.id)
+        redis.set(f'chat_info/{message.from_user.username}', message.chat.id)
         logging.info('Chat ID:', message.chat.id)
     except Exception as e:
         logging.error(e)
