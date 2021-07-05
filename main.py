@@ -135,8 +135,10 @@ def send_register(message):
 @bot.message_handler(commands=['hours'], content_types=['text'])
 def handle_hour_report(message):
     try:
-        if not re.search('^(?:([01]?\d|2[0-3]):([0-5]?\d):)?([0-5]?\d)$', message.text[7:]):
-            bot.reply_to(message, f"Sorry I didn't understand that {message.text[7:]}")
+        user_message = message.text[7:]
+
+        if not re.search('^(?:([01]?\d|2[0-3]):([0-5]?\d):)?([0-5]?\d)$', user_message):
+            bot.reply_to(message, f"Sorry I didn't understand that {user_message}")
         else:
             logging.debug(
                 f'User: {message.from_user.username} entered time {message.text}')
@@ -153,7 +155,7 @@ def handle_hour_report(message):
                 update_column_number = values[ROW_NAMES].index(
                     users[message.from_user.username]) + 1
                 worksheet.update_cell(
-                    update_row_number, update_column_number, message.text)
+                    update_row_number, update_column_number, user_message)
                 bot.send_message(message.chat.id, 'successfully update!')
                 logging.info(
                     f'time updated for user {message.from_user.username}')
