@@ -90,7 +90,6 @@ def send_welcome(message):
     try:
         bot.reply_to(message, 'Hello, you need to register send /register')
         redis.set(f'chat_id/{message.from_user.username}', message.chat.id)
-        logging.info('Chat ID:', message.chat.id)
     except Exception as e:
         logging.error(e)
         bot.reply_to(message, 'Something went wrong')
