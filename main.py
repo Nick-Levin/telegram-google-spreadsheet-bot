@@ -63,7 +63,8 @@ users = {}
 chat_id = 0
 
 while True:
-    chat_id = redis.get('chat_info/')
+    #TODO: add username to chat id get
+    chat_id = redis.get('chat_chat_id/')
     result = redis.scan(cursor, match='user/*', count=10)
     cursor = int(result[0])
     keys = result[1]
@@ -89,7 +90,7 @@ def handle_start_help(message):
 def send_welcome(message):
     try:
         bot.reply_to(message, 'Hello, you need to register send /register')
-        redis.set(f'chat_info/{message.from_user.username}', message.chat.id)
+        redis.set(f'chat_id/{message.from_user.username}', message.chat.id)
         logging.info('Chat ID:', message.chat.id)
     except Exception as e:
         logging.error(e)
