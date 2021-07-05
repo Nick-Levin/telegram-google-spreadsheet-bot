@@ -119,7 +119,7 @@ if current_day_name in days_of_the_week:
 @bot.message_handler(commands=['register'], content_types=['text'])
 def send_register(message):
     try:
-        logging.info(message.text, message.from_user.username)
+        # logging.info(message.text, message.from_user.username)
         full_name = message.text[10:]
         if full_name.replace(" ", "").isalpha():
             redis.set(f'user/{message.from_user.username}', full_name)
